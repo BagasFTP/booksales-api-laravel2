@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ $title ?? 'Library Demo' }}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand bg-white border-bottom mb-4">
+  <div class="container">
+    <a class="navbar-brand fw-semibold" href="{{ route('genres.index') }}">Booksales</a>
+    <div class="ms-auto">
+      <a class="btn btn-outline-primary me-2" href="{{ route('genres.index') }}">Genres</a>
+      <a class="btn btn-primary" href="{{ route('authors.index') }}">Authors</a>
+    </div>
+  </div>
+</nav>
+<main class="container">@yield('content')</main>
+</body>
+</html>
+
