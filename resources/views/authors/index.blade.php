@@ -7,19 +7,21 @@
       <table class="table table-striped mb-0">
         <thead>
           <tr>
-            <th style="width:80px">ID</th>
+            <th>ID</th>
             <th>Name</th>
             <th>Country</th>
             <th>Birth Year</th>
+            <th>Total Books</th>
           </tr>
         </thead>
         <tbody>
-          @foreach ($authors as $a)
+          @foreach ($authors as $author)
             <tr>
-              <td>{{ $a['id'] }}</td>
-              <td>{{ $a['name'] }}</td>
-              <td>{{ $a['country'] }}</td>
-              <td>{{ $a['birth_year'] }}</td>
+              <td>{{ $author->id }}</td>
+              <td>{{ $author->name }}</td>
+              <td>{{ $author->country }}</td>
+              <td>{{ $author->birth_year }}</td>
+              <td>{{ $author->books->count() }}</td>
             </tr>
           @endforeach
         </tbody>
