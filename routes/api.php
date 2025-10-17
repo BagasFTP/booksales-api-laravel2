@@ -1,10 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BookController;
 use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\GenreController;
 
-Route::get('/ping', fn () => response()->json(['message' => 'API is alive']));
+// health check
+Route::get('/ping', fn () => response()->json(['message' => 'API ready']));
 
-Route::get('/books',   [BookController::class, 'index']);
+// READ ALL
 Route::get('/authors', [AuthorController::class, 'index']);
+Route::get('/genres',  [GenreController::class,  'index']);
+
+// CREATE
+Route::post('/authors', [AuthorController::class, 'store']);
+Route::post('/genres',  [GenreController::class,  'store']);

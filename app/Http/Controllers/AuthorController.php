@@ -7,18 +7,14 @@ use Illuminate\Http\Request;
 
 class AuthorController extends Controller
 {
+    // READ ALL (GET /api/authors)
     public function index()
     {
-        $authors = Author::withCount('books')->orderBy('id')->get();
-        return response()->json(['data' => $authors]);
+        $authors = Author::orderBy('id')->get();
+        return response()->json(['data' => $authors], 200);
     }
 
-    public function show(Author $author)
-    {
-        $author->load('books');
-        return response()->json(['data' => $author]);
-    }
-
+    // CREATE (POST /api/authors)
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -28,26 +24,7 @@ class AuthorController extends Controller
         ]);
 
         $author = Author::create($validated);
+
         return response()->json(['data' => $author], 201);
-    }
-
-    // PUT /api/authors/{author}
-    public function update(Request $request, Author $author)
-    {
-        $validated = $request->validate([
-            'name'       => 'sometimes|required|string|max:255',
-            'country'    => 'nullable|string|max:100',
-            'birth_year' => 'nullable|integer',
-        ]);
-
-        $author->update($validated);
-        return response()->json(['data' => $author]);
-    }
-
-    // DELETE /api/authors/{author}
-    public function destroy(Author $author)
-    {
-        $author->delete();
-        return response()->json(null, 204);
     }
 }
