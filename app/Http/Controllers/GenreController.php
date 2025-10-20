@@ -4,32 +4,68 @@ namespace App\Http\Controllers;
 
 use App\Models\Genre;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class GenreController extends Controller
 {
-    // READ ALL (GET /api/genres)
-    public function index()
-    {
-        $genres = Genre::orderBy('id')->get();
-        return response()->json(['data' => $genres], 200);
-    }
+    // index() & store() punyamu tetap
 
-    // CREATE (POST /api/genres)
-    public function store(Request $request)
+    // GET /api/genres/{id}
+    public function show($id)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'slug' => 'nullable|string|max:120'
-        ]);
-
-        // auto-generate slug jika tidak diisi
-        if (empty($validated['slug'])) {
-            $validated['slug'] = Str::slug($validated['name']);
+        $genre = Genre::find($id);
+        if (!$genre) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Genre tidak ditemukan',
+            ], 404);
         }
 
-        $genre = Genre::create($validated);
+        return response()->json([
+            'status' => true,
+            'data'   => $genre,
+        ], 200);
+    }
 
-        return response()->json(['data' => $genre], 201);
+    // PUT/PATCH /api/genres/{id}
+    public function update(Request $request, $id)
+    {
+        $genre = Genre::find($id);
+        if (!$genre) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Genre tidak ditemukan',
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:100|unique:genres,name,' . $genre->id,
+        ]);
+
+        $genre->update($validated);
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Genre berhasil diperbarui',
+            'data'    => $genre,
+        ], 200);
+    }
+
+    // DELETE /api/genres/{id}
+    public function destroy($id)
+    {
+        $genre = Genre::find($id);
+        if (!$genre) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Genre tidak ditemukan',
+            ], 404);
+        }
+
+        $genre->delete();
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Genre berhasil dihapus',
+        ], 200);
     }
 }
