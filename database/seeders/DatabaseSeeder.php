@@ -8,9 +8,9 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Jangan pakai User::factory() — kita panggil seeder manual
         $this->call([
-            AuthorSeeder::class,
-            GenreSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }
