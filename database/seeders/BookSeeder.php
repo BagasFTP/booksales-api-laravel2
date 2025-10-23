@@ -3,16 +3,30 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Book;
 
-class BookSeeder extends Seeder {
-    public function run(): void {
-        DB::table('books')->insert([
-            ['title' => 'Harry Potter',                 'genre' => 'Fantasy',      'publication_year' => 1997, 'author_id' => 1],
-            ['title' => 'Game of Thrones',              'genre' => 'Fantasy',      'publication_year' => 1996, 'author_id' => 2],
-            ['title' => 'Murder on the Orient Express', 'genre' => 'Mystery',      'publication_year' => 1934, 'author_id' => 3],
-            ['title' => 'Kafka on the Shore',           'genre' => 'Fiction',      'publication_year' => 2002, 'author_id' => 4],
-            ['title' => 'Sapiens',                      'genre' => 'Non-Fiction',  'publication_year' => 2011, 'author_id' => 5],
-        ]);
+class BookSeeder extends Seeder
+{
+    public function run(): void
+    {
+        Book::updateOrCreate(
+            ['title' => 'Laskar Pelangi'],
+            [
+                'author_id' => 1,          
+                'genre' => 'Novel',
+                'publication_year' => 2005,
+                'price' => 120000.00,
+            ]
+        );
+
+        Book::updateOrCreate(
+            ['title' => 'A Game of Thrones'],
+            [
+                'author_id' => 2,            
+                'genre' => 'Fantasy',
+                'publication_year' => 1996,
+                'price' => 200000.00,
+            ]
+        );
     }
 }

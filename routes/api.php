@@ -1,20 +1,64 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\GenreController;
-use App\Http\Middleware\EnsureUserIsAdmin; // ← tambahkan ini di atas
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\TransactionController;
 
-Route::post('login', [AuthController::class, 'login']);
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+| Semua route API ada di sini. Sanctum dipakai untuk autentikasi token.
+| Role dibedakan: admin vs customer (user biasa).
+|--------------------------------------------------------------------------
+*/
 
-// PUBLIC (tanpa login)
-Route::get('ping', fn() => response()->json(['ok' => true]));
-Route::apiResource('authors', AuthorController::class)->only(['index','show']);
-Route::apiResource('genres',  GenreController::class)->only(['index','show']);
+// ----------------------
+// 🔹 AUTH ROUTES
+// ----------------------
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
-// ADMIN (login + admin)
-Route::middleware(['auth:sanctum', EnsureUserIsAdmin::class])->group(function () {
-    Route::apiResource('authors', AuthorController::class)->only(['store','update','destroy']);
-    Route::apiResource('genres',  GenreController::class)->only(['store','update','destroy']);
+// ----------------------
+// 🔹 PUBLIC ROUTES (tanpa login)
+// ----------------------
+Route::get('/authors', [AuthorController::class, 'index']);
+Route::get('/authors/{id}', [AuthorController::class, 'show']);
+Route::get('/genres', [GenreController::class, 'index']);
+Route::get('/genres/{id}', [GenreController::class, 'show']);
+
+// ----------------------
+// 🔹 ADMIN ONLY ROUTES
+// ----------------------
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    // CRUD Author & Genre
+    Route::post('/authors', [AuthorController::class, 'store']);
+    Route::put('/authors/{id}', [AuthorController::class, 'update']);
+    Route::delete('/authors/{id}', [AuthorController::class, 'destroy']);
+
+    Route::post('/genres', [GenreController::class, 'store']);
+    Route::put('/genres/{id}', [GenreController::class, 'update']);
+    Route::delete('/genres/{id}', [GenreController::class, 'destroy']);
+
+    // Books CRUD (optional)
+    Route::apiResource('books', BookController::class);
+
+    // Transaction (Admin access: Read All + Delete)
+    Route::get('/transactions', [TransactionController::class, 'index']);
+    Route::delete('/transactions/{id}', [TransactionController::class, 'destroy']);
+});
+
+// ----------------------
+// 🔹 CUSTOMER ROUTES
+// ----------------------
+Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
+    // Transaction (Customer access: Create, Show, Update)
+    Route::post('/transactions', [TransactionController::class, 'store']);
+    Route::get('/transactions/{id}', [TransactionController::class, 'show']);
+    Route::put('/transactions/{id}', [TransactionController::class, 'update']);
 });
